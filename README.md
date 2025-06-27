@@ -60,11 +60,5 @@ For more information, please review:
 
 ## Changelog
 
-### 1.2.5
-- Added support for WooCommerce block-based checkout
-
-### 1.2.4
-- Added customizable checkout logo feature
-
 ### 1.0.0
 - Initial release
