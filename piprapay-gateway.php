@@ -189,7 +189,15 @@ function piprapay_init_gateway_class()
                 ];
             }
         
-            wc_add_notice(__('Payment error: Unable to create payment link.', 'piprapay-gateway'), 'error');
+            $message = !empty($result['message']) ? esc_html($result['message']) : __('Unknown error.', 'piprapay-gateway');
+            
+            wc_add_notice(
+                sprintf(
+                    __('Payment error: Unable to create payment link. %s', 'piprapay-gateway'),
+                    $message
+                ),
+                'error'
+            );
             return ['result' => 'fail'];
         }
         
