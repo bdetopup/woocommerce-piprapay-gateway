@@ -152,8 +152,8 @@ function piprapay_init_gateway_class()
             }
         
             $data = [
-                'full_name'    => sanitize_text_field(trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name())),
-                'email_mobile' => sanitize_email($order->get_billing_email()),
+                'full_name'    => sanitize_text_field(trim(($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) ?: 'Jhon')),
+                'email_mobile' => sanitize_email($order->get_billing_email() ?: 'jhon@gmail.com'),
                 'amount'       => (string) $order->get_total(),
                 'metadata'     => ['invoiceid' => (string) $order->get_id()],
                 'redirect_url' => $this->get_return_url($order),
