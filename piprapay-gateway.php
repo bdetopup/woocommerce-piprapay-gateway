@@ -11,7 +11,7 @@
  * WC tested up to: 8.0
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: piprapay-gateway
+ * Text Domain: piprapay
  * Contributors: piprapay
  */
 
@@ -203,8 +203,6 @@ function piprapay_init_gateway_class()
         
         public function handle_webhook()
         {
-            $log_file = WP_CONTENT_DIR . '/piprapay_webhook.log';
-        
             $raw = file_get_contents("php://input");
 
             $payload = json_decode($raw, true);
@@ -223,22 +221,24 @@ function piprapay_init_gateway_class()
             
             if ($received_api_key !== $this->apikey) {
                 status_header(401);
-                echo json_encode(["status" => false, "message" => "Unauthorized request."]);
+                wp_send_json_error(['message' => 'Unauthorized request.']);
                 exit;
             }
         
             if (empty($payload['metadata']['invoiceid']) || empty($payload['pp_id'])) {
                 status_header(400);
-                echo "Missing required data.";
+                wp_send_json_error(['message' => 'Missing required data.']);
                 exit;
             }
         
-            $order_id = $payload['metadata']['invoiceid'];
-            $order = wc_get_order($order_id);
+            $order_id = isset($payload['metadata']['invoiceid']) ? absint($payload['metadata']['invoiceid']) : 0;
+
+            $pp_id = isset($payload['pp_id']) ? sanitize_text_field($payload['pp_id']) : '';
+
         
             if (!$order) {
                 status_header(404);
-                echo "Order not found.";
+                wp_send_json_error(['message' => 'Order not found.']);
                 exit;
             }
         
@@ -249,12 +249,12 @@ function piprapay_init_gateway_class()
                 $order->add_order_note(__('Payment verified via PipraPay.', 'piprapay-gateway'));
             } else {
                 $order->update_status('failed', __('Payment verification failed via PipraPay.', 'piprapay-gateway'));
-                echo "Verification failed.";
+                wp_send_json_error(['message' => 'Verification failed.']);
                 exit;
             }
         
             status_header(200);
-            echo "Success";
+            wp_send_json_success(['message' => 'Success']);
             exit;
         }
 
