@@ -235,7 +235,8 @@ function piprapay_init_gateway_class()
 
             $pp_id = isset($payload['pp_id']) ? sanitize_text_field($payload['pp_id']) : '';
 
-        
+            $order = wc_get_order($order_id);
+            
             if (!$order) {
                 status_header(404);
                 wp_send_json_error(['message' => 'Order not found.']);
