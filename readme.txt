@@ -1,10 +1,10 @@
 === PipraPay Gateway ===
 Contributors: piprapay
 Tags: payment, gateway, WooCommerce, piprapay
-Tested up to: 6.7
+Tested up to: 6.8
 WC requires at least: 3.0
 WC tested up to: 8.0
-Stable tag: 1.0.0
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,21 @@ PipraPay Gateway provides an easy, secure, and reliable way to accept payments o
 - Order payment verification
 - Compatibility with WooCommerce High-Performance Order Storage (HPOS)
 - Compatibility with WooCommerce block-based checkout (new in 1.2.5)
+
+Supported Gateways:
+
+- bKash
+- Rocket
+- Nagad
+- Upay
+- Cellfin
+- Tap
+- Ok Wallet
+- SSLCommerz
+- Paypal
+- Stripe
+- Binance
+- etc
 
 == Installation ==
 
@@ -68,7 +83,21 @@ For more information, please review the PipraPay:
 = 1.0.0 =
 * Initial release
 
+= 1.0.1 =
+* Solved Order Status Update Issue
+* Include Supported Gateways
+
+= 1.0.2 =
+* Fixed issue where pending orders incorrectly moved to failed status
+
 == Upgrade Notice ==
 
 = 1.0.0 =
 Initial release
+
+= 1.0.1 =
+Solved Order Status Update Issue
+Include Supported Gateways
+
+= 1.0.2 =
+Fixed issue where pending orders incorrectly moved to failed status
