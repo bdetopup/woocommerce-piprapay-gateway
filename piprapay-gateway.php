@@ -4,7 +4,7 @@
  * Plugin URI: https://piprapay.com
  * Description: A seamless and secure payment gateway integration for WooCommerce using PipraPay.
  * Author: PipraPay
- * Version: 1.0.0
+ * Version: 1.0.2
  * Requires at least: 5.2
  * Requires PHP: 7.4
  * WC requires at least: 3.0
