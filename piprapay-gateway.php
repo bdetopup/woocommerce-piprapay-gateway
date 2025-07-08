@@ -249,14 +249,15 @@ function piprapay_init_gateway_class()
                 $order->payment_complete();
                 $order->add_order_note(__('Payment verified via PipraPay.', 'piprapay-gateway'));
             } else {
-                $order->update_status('failed', __('Payment verification failed via PipraPay.', 'piprapay-gateway'));
-                wp_send_json_error(['message' => 'Verification failed.']);
-                exit;
+                if ($verification['status'] === 'pending') {
+                    $order->add_order_note(__('Payment verification is pending.', 'piprapay-gateway'));
+                } else {
+                    $order->update_status('failed', __('Payment verification failed via PipraPay.', 'piprapay-gateway'));
+                }
             }
         
             status_header(200);
             wp_send_json_success(['message' => 'Success']);
-            exit;
         }
 
 
