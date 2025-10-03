@@ -4,7 +4,7 @@
  * Plugin URI: https://piprapay.com
  * Description: A seamless and secure payment gateway integration for WooCommerce using PipraPay.
  * Author: PipraPay
- * Version: 1.0.4
+ * Version: 1.0.5
  * Requires at least: 5.2
  * Requires PHP: 7.4
  * WC requires at least: 3.0
@@ -12,7 +12,7 @@
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: piprapay
- * Contributors: piprapay
+ * Contributors: Asif Arman Saikot
  */
 
 if (!defined('ABSPATH')) exit;
@@ -76,6 +76,7 @@ function piprapay_init_gateway_class() {
 
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
             add_action('woocommerce_api_' . strtolower($this->id), [$this, 'handle_webhook']);
+            add_action('woocommerce_admin_order_data_after_billing_address', [$this, 'display_piprapay_order_meta'], 10, 1);
         }
 
         public function init_form_fields() {
@@ -234,6 +235,23 @@ function piprapay_init_gateway_class() {
             $verification = $this->verify_payment($payload['pp_id']);
 
             if ($verification['status'] === 'completed') {
+                // Save Payment ID (pp_id)
+                $order->update_meta_data('_piprapay_payment_id', $pp_id);
+
+                // Attempt to get Transaction ID, Sender Number, and Payment Method from verification response
+                $transaction_id = isset($verification['transaction_id']) ? sanitize_text_field($verification['transaction_id']) : '';
+                $sender_number  = isset($verification['sender_number']) ? sanitize_text_field($verification['sender_number']) : '';
+                $payment_method_name = isset($verification['payment_method']) ? sanitize_text_field($verification['payment_method']) : $this->method_title; // Default to gateway title if not found
+
+                if (!empty($transaction_id)) {
+                    $order->update_meta_data('_piprapay_transaction_id', $transaction_id);
+                }
+                if (!empty($sender_number)) {
+                    $order->update_meta_data('_piprapay_sender_number', $sender_number);
+                }
+                $order->update_meta_data('_piprapay_actual_payment_method', $payment_method_name);
+                $order->save();
+
                 // Set order status based on order_type
                 $order_type = $this->order_type;
                 if ($order_type === 'physical') {
@@ -255,6 +273,32 @@ function piprapay_init_gateway_class() {
 
             status_header(200);
             wp_send_json_success(['message' => 'Success']);
+        }
+
+        /**
+         * Display PipraPay transaction details in the admin order billing section.
+         *
+         * @param WC_Order $order The order object.
+         */
+        public function display_piprapay_order_meta($order) {
+            $payment_id            = $order->get_meta('_piprapay_payment_id', true);
+            $transaction_id        = $order->get_meta('_piprapay_transaction_id', true);
+            $sender_number         = $order->get_meta('_piprapay_sender_number', true);
+            $actual_payment_method = $order->get_meta('_piprapay_actual_payment_method', true);
+
+            echo '<h3>' . __('PipraPay Details', 'piprapay-gateway') . '</h3>';
+            if ($payment_id) {
+                echo '<p><i class="fa fa-arrow-right"></i> <strong>' . __('Payment ID:', 'piprapay-gateway') . '</strong> ' . esc_html($payment_id) . '</p>';
+            }
+            if ($transaction_id) {
+                echo '<p><i class="fa fa-arrow-right"></i> <strong>' . __('Transaction ID:', 'piprapay-gateway') . '</strong> ' . esc_html($transaction_id) . '</p>';
+            }
+            echo '<p><i class="fa fa-arrow-right"></i> <strong>' . __('Payment Method:', 'piprapay-gateway') . '</strong> ' . esc_html($actual_payment_method) . '</p>';
+            if ($sender_number) {
+                echo '<p><i class="fa fa-arrow-right"></i> <strong>' . __('Sender Number:', 'piprapay-gateway') . '</strong> ' . esc_html($sender_number) . '</p>';
+            } else {
+                echo '<p><i class="fa fa-arrow-right"></i> <strong>' . __('Sender Number:', 'piprapay-gateway') . '</strong> ' . __('N/A (Not available from PipraPay API response)', 'piprapay-gateway') . '</p>';
+            }
         }
 
         private function verify_payment($pp_id) {
@@ -316,4 +360,10 @@ function piprapay_init_gateway_class() {
         $gateways[] = 'WC_PIPRAPAY_Gateway';
         return $gateways;
     });
+
+    // Enqueue Font Awesome for admin
+    add_action('admin_enqueue_scripts', 'piprapay_enqueue_admin_styles');
+    function piprapay_enqueue_admin_styles() {
+        wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css', [], '6.0.0-beta3');
+    }
 }
