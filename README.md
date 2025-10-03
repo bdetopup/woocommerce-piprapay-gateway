@@ -70,6 +70,9 @@ For more information, please review:
 
 == Changelog ==
 
+= 1.0.5 =
+* Enhanced order details display in admin: Added Payment ID, Transaction ID, Sender Number, and dynamic Payment Method (e.g., bKash, Nagad) to the billing section.
+
 = 1.0.4 =
 * Added new Show / Hide icon option on checkout page
 * Added new Direct Settings link from the Plugins page
