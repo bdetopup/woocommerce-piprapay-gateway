@@ -1,19 +1,11 @@
-=== PipraPay Gateway for WooCommerce ===
-Contributors: piprapay
-Donate link: https://piprapay.com
-Tags: woocommerce, payment gateway, piprapay, digital products, HPOS
-Requires at least: 5.2
-Tested up to: 8.0
-Requires PHP: 7.4
-Stable tag: 1.0.4
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+# PipraPay Gateway for WooCommerce
+
+![License](https://img.shields.io/badge/license-GPLv2%20or%20later-blue.svg)
+![WooCommerce](https://img.shields.io/badge/WooCommerce-3.0%2B-orange.svg)
+![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue.svg)
+![HPOS Compatible](https://img.shields.io/badge/HPOS-Compatible-success.svg)
 
 A seamless and secure payment gateway integration for WooCommerce using PipraPay.
-
-== Description ==
-
-PipraPay Gateway is a secure, fast, and flexible WooCommerce payment gateway plugin that allows store owners to accept payments through PipraPay. It supports both physical and digital products, with configurable order status handling after payment.
 
 === Features ===
 * Integration with the PipraPay API
@@ -77,6 +69,9 @@ For more information, please review:
 * [PipraPay Privacy Policy](https://piprapay.com/privacy)
 
 == Changelog ==
+
+= 1.0.5 =
+* Enhanced order details display in admin: Added Payment ID, Transaction ID, Sender Number, and dynamic Payment Method (e.g., bKash, Nagad) to the billing section.
 
 = 1.0.4 =
 * Added new Show / Hide icon option on checkout page
